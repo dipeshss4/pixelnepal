@@ -14,3 +14,44 @@
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('login-admin','AdminLoginController@adminLogin')->name('admin.login');
+Route::post('login-admin','AdminLoginController@login');
+Auth::routes();
+Route::get('auth/{provider}', 'Auth\LoginController@redirectToProvider');
+Route::get('dashboard/{provider}/callback', 'Auth\LoginController@handleProviderCallback');
+Route::get('dashbaord/{provider}/callback', 'Auth\LoginController@handleProviderCallback');
+
+
+
+Route::group(
+    [
+        'middleware'    => 'Admin',
+        'namespace'     => 'Admin',
+        'prefix'        => 'admin'
+    ],
+    function ()
+    {
+       Route::get('/','AdminController@dashboard')->name('admin');
+       Route::resource('category','CategoryController');
+       Route::resource('product','ProductController');
+       Route::Resource('slider','SliderController');
+       Route::Resource('gallery','GalleryController');
+
+
+    }
+);
+
+Route::group(
+    [    'middleware'    => 'auth',
+        'namespace' => 'Front'
+    ],
+    function (){
+       Route::get('dashboard','FrontendController@dashboard')->name('dashboard');
+    });
+
+
+
+
+
+
